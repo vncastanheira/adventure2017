@@ -14,8 +14,8 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
     [Header("Dialogues")]
     public List<Dialogue> Dialogues;
     static Dialogue currentDialogue;
-    bool fastFoward;
     bool canSkip;
+    bool isBusy;
 
     #region Singleton
     private void Awake()
@@ -36,6 +36,11 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
 
     public static void PlayDialogue(string key)
     {
+        if (Singleton.isBusy)
+            return;
+
+        Singleton.DialogueText.text = "";
+
         var dialogue = Singleton.Dialogues
             .FirstOrDefault(d => d.Key.Equals(key, System.StringComparison.InvariantCultureIgnoreCase));
         if (dialogue != null)
@@ -43,14 +48,15 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
             currentDialogue = dialogue;
             Singleton.StartCoroutine(StartDialogue());
         }
-        else
+        else // this can never happen
         {
-            Singleton.DialogueText.text = "Key " + key + " not found"; 
+            Debug.LogWarning("Key " + key + " not found"); 
         }
     }
 
     static IEnumerator StartDialogue()
     {
+        Singleton.isBusy = true;
         Singleton.CanvasAnimator.SetTrigger("Dialogue_Start");
         yield return new WaitForSeconds(0.5f);
         int index = 0;
@@ -72,5 +78,6 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
         }
         Singleton.DialogueText.text = "";
         Singleton.CanvasAnimator.SetTrigger("Dialogue_End");
+        Singleton.isBusy = false;
     }
 }
