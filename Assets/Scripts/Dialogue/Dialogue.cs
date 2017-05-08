@@ -19,5 +19,5 @@ public class DialogueLine
 public enum Character
 {
     Player,
-    NPC
+    Narrator
 }

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
-[System.Serializable, CreateAssetMenu(fileName = "Condition", menuName = "Adventure/Condition")]
-public class Condition : ScriptableObject
+[System.Serializable]
+public class Condition : MonoBehaviour
 {
     public string Name;
-    public string Key;
     public bool IsSatisfied;
+    public Item RequiredItem;
+    public Dialogue OptionalDialogue;
 }

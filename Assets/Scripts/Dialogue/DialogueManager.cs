@@ -37,6 +37,12 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
     /// <param name="dialogue">The dialogue object</param>
     public static void PlayDialogue(Dialogue dialogue)
     {
+        if(dialogue == null)
+        {
+            Debug.LogWarning("Dialogue is null");
+            return;
+        }
+
         RunDialogue(dialogue);
     }
 
@@ -84,8 +90,8 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
                 case Character.Player:
                     Singleton.DialogueText.text = "<color=#99e550>You:</color> ";
                     break;
-                case Character.NPC:
-                    Singleton.DialogueText.text = "<color=#99e550>Person:</color> ";
+                case Character.Narrator:
+                    Singleton.DialogueText.text = "<color=#99e550>Narrator:</color> ";
                     break;
                 default:
                     Singleton.DialogueText.text = "<color=#99e550>???:</color> ";

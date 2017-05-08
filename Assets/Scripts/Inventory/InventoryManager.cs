@@ -25,7 +25,7 @@ public class InventoryManager : vnc.Utilities.SingletonMonoBehaviour<InventoryMa
     public Image Inventory;
     public LayoutGroup InventoryLayout;
 
-    static InteractiveObject _currentInteraction;
+    static InteractiveObject _currentObject;
 
     void Start()
     {
@@ -57,7 +57,7 @@ public class InventoryManager : vnc.Utilities.SingletonMonoBehaviour<InventoryMa
 
     public static void Combine(InteractiveObject interactiveObj)
     {
-        _currentInteraction = interactiveObj;
+        _currentObject = interactiveObj;
         Show();
     }
 
@@ -68,8 +68,21 @@ public class InventoryManager : vnc.Utilities.SingletonMonoBehaviour<InventoryMa
     /// <returns>If the combination worked</returns>
     public static bool TryCombination(Item item)
     {
+        if(_currentObject == null)
+        {
+            DialogueManager.PlayDialogue(item.Description);
+            return false;
+        }
+
         Hide();
-        return _currentInteraction.TrySatisfyCondition(item.Key);
+        // check if object have a condition that requires this item
+        var isSatisfied = _currentObject.TrySatisfyCondition(item);
+        if(isSatisfied)
+            DialogueManager.PlayDialogue(item.IfCombined);
+        else
+            DialogueManager.PlayDialogue(item.CannotCombine);
+
+        return isSatisfied;
     }
 
     static void Show()

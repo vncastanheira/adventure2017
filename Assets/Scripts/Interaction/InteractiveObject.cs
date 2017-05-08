@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,10 +19,16 @@ public class InteractiveObject : MonoBehaviour
     [Header("Dialogue keys")]
     public Dialogue ExamineDialogue;
     public Dialogue UseDialogue;
+    public Dialogue CannotUseDialogue;
 
-    public List<Condition> Conditions;
+    List<Condition> Conditions;
     public UnityEvent OnUse;
-	
+
+    private void Start()
+    {
+        Conditions = GetComponents<Condition>().ToList();
+    }
+
     public void Use()
     {
         if (IsItem)
@@ -31,10 +38,15 @@ public class InteractiveObject : MonoBehaviour
             return;
         }
 
-        if (UseDialogue != null)
+        if(Conditions.Count == 0 || Conditions.All(c => c.IsSatisfied))
+        {
             DialogueManager.PlayDialogue(UseDialogue);
-
-        OnUse.Invoke();
+            OnUse.Invoke();
+        }
+        else
+        {
+            DialogueManager.PlayDialogue(CannotUseDialogue);
+        }
     }
 
     public void Examine()
@@ -47,7 +59,7 @@ public class InteractiveObject : MonoBehaviour
         InventoryManager.Combine(this);
     }
 
-    public bool TrySatisfyCondition(string key)
+    public bool TrySatisfyCondition(Item useItem)
     {
         if(Conditions == null)
         {
@@ -56,7 +68,7 @@ public class InteractiveObject : MonoBehaviour
         }
         else
         {
-            var condition = Conditions.Find(c => c.Key.Equals(key));
+            var condition = Conditions.Find(c => c.RequiredItem == useItem);
             if(condition != null)
             {
                 condition.IsSatisfied = true;
