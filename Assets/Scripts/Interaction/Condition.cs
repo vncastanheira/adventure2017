@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[System.Serializable]
+[System.Serializable, CreateAssetMenu(fileName = "Condition", menuName = "Adventure/Condition")]
 public class Condition : ScriptableObject
 {
     public string Name;

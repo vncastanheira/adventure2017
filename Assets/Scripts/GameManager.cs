@@ -1,13 +1,28 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : vnc.Utilities.SingletonMonoBehaviour<GameManager>
+{
+    #region Singleton
 
-#if UNITY_EDITOR
-    public void DebugPlayIntro()
+    private void Awake()
     {
-        DialogueManager.PlayDialogue("Intro");
+        CreateSingleton();
     }
-#endif
+
+    public override void CreateSingleton()
+    {
+        Singleton = this;
+    }
+    #endregion
+
+    [HideInInspector] public static bool FirstPersonMode = true;
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            FirstPersonMode = !FirstPersonMode;
+    }
 }

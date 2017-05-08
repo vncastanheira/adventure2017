@@ -24,18 +24,20 @@ public class FirstPerson : MonoBehaviour
 
     void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        CursorMode();
 
-        CursorLock();
+        if (GameManager.FirstPersonMode)
+        {
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
+        
+            Look(mouseX, mouseY);
 
-        Look(mouseX, mouseY);
+            var walk = Input.GetAxis("Vertical") * p_character.transform.TransformDirection(Vector3.forward);
+            var strafe = Input.GetAxis("Horizontal") * p_character.transform.TransformDirection(Vector3.right);
 
-        var walk = Input.GetAxis("Vertical") * p_character.transform.TransformDirection(Vector3.forward);
-        var strafe = Input.GetAxis("Horizontal") * p_character.transform.TransformDirection(Vector3.right);
-
-        p_character.SimpleMove((walk + strafe) * Speed);
-
+            p_character.SimpleMove((walk + strafe) * Speed);
+        }
     }
     #endregion
 
@@ -47,10 +49,18 @@ public class FirstPerson : MonoBehaviour
         p_Camera.transform.localRotation = ClampRotation(p_Camera.transform.localRotation, -90f, 90f);
     }
 
-    void CursorLock()
+    void CursorMode()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (GameManager.FirstPersonMode)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     Quaternion ClampRotation(Quaternion q, float minAngle, float maxAngle)

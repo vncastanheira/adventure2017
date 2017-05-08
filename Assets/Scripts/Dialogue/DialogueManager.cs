@@ -9,9 +9,8 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
 {
     [Header("Canvas")]
     public Text DialogueText;
-    public Animator CanvasAnimator;
 
-    [Header("Dialogues")]
+    /// <summary>All dialogues in the game</summary>
     public List<Dialogue> Dialogues;
     static Dialogue currentDialogue;
     bool canSkip;
@@ -34,15 +33,28 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
         canSkip = Input.GetButtonDown("Skip");
     }
 
+    /// <summary> Play a dialogue from an object</summary>
+    /// <param name="dialogue">The dialogue object</param>
+    public static void PlayDialogue(Dialogue dialogue)
+    {
+        RunDialogue(dialogue);
+    }
+
+    /// <summary> Play dialogue from the manager </summary>
+    /// <param name="key">The key corresponding the dialogue</param>
     public static void PlayDialogue(string key)
+    {
+        var dialogue = Singleton.Dialogues
+            .FirstOrDefault(d => d.Key.Equals(key, System.StringComparison.InvariantCultureIgnoreCase));
+
+        RunDialogue(dialogue);
+    }
+
+    static void RunDialogue(Dialogue dialogue)
     {
         if (Singleton.isBusy)
             return;
 
-        Singleton.DialogueText.text = "";
-
-        var dialogue = Singleton.Dialogues
-            .FirstOrDefault(d => d.Key.Equals(key, System.StringComparison.InvariantCultureIgnoreCase));
         if (dialogue != null)
         {
             currentDialogue = dialogue;
@@ -50,14 +62,14 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
         }
         else // this can never happen
         {
-            Debug.LogWarning("Key " + key + " not found"); 
+            Debug.LogWarning("Dialogue not found");
         }
     }
 
     static IEnumerator StartDialogue()
     {
         Singleton.isBusy = true;
-        Singleton.CanvasAnimator.SetTrigger("Dialogue_Start");
+        //Singleton.CanvasAnimator.SetTrigger("Dialogue_Start");
         yield return new WaitForSeconds(0.5f);
         int index = 0;
         var currentLine = currentDialogue.Lines.First();
@@ -66,18 +78,33 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
             Singleton.canSkip = false;
             StringReader reader = new StringReader(currentLine.Line);
             Singleton.DialogueText.text = "";
+
+            switch (currentLine.Speaker)
+            {
+                case Character.Player:
+                    Singleton.DialogueText.text = "<color=#99e550>You:</color> ";
+                    break;
+                case Character.NPC:
+                    Singleton.DialogueText.text = "<color=#99e550>Person:</color> ";
+                    break;
+                default:
+                    Singleton.DialogueText.text = "<color=#99e550>???:</color> ";
+                    break;
+            }
+
             foreach (var c in reader.ReadToEnd())
             {
                 Singleton.DialogueText.text += c;
                 yield return new WaitForSeconds(0.02f);
             }
-            yield return new WaitUntil(() => { return Singleton.canSkip; });
 
             index++;
             currentLine = currentDialogue.Lines.ElementAtOrDefault(index);
+            Singleton.isBusy = currentLine != null;
+            yield return new WaitUntil(() => { return Singleton.canSkip;  });
         }
         Singleton.DialogueText.text = "";
-        Singleton.CanvasAnimator.SetTrigger("Dialogue_End");
+        //Singleton.CanvasAnimator.SetTrigger("Dialogue_End");
         Singleton.isBusy = false;
     }
 }
