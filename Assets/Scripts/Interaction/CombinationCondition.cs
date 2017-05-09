@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class Condition : ScriptableObject
+public class CombinationCondition
 {
     public string Name;
     public bool IsSatisfied;

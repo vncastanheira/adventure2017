@@ -78,7 +78,10 @@ public class InventoryManager : vnc.Utilities.SingletonMonoBehaviour<InventoryMa
         // check if object have a condition that requires this item
         var isSatisfied = _currentObject.TrySatisfyCondition(item);
         if(isSatisfied)
+        {
             DialogueManager.PlayDialogue(item.IfCombined);
+            _currentObject.CheckConditionsSatisfied();
+        }
         else
             DialogueManager.PlayDialogue(item.CannotCombine);
 

@@ -30,7 +30,7 @@ public class InteractiveObject : MonoBehaviour
 
     public void Use()
     {
-        if(CurrentState != null)
+        if (CurrentState != null)
             _currentState.OnUse.Invoke();
     }
 
@@ -43,14 +43,14 @@ public class InteractiveObject : MonoBehaviour
     public void Combine()
     {
         if (CurrentState != null)
+        {
             _currentState.OnCombine.Invoke();
-        
-        //InventoryManager.Combine(this);
+        }
     }
 
     public bool TrySatisfyCondition(Item useItem)
     {
-        if(_currentState.Conditions == null)
+        if (_currentState.Conditions == null)
         {
             // TODO: Feedback
             Debug.LogWarning("No conditions met");
@@ -58,16 +58,21 @@ public class InteractiveObject : MonoBehaviour
         else
         {
             var condition = _currentState.Conditions.Find(c => c.RequiredItem == useItem);
-            if(condition != null)
+            if (condition != null)
             {
                 condition.IsSatisfied = true;
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
+    public void CheckConditionsSatisfied()
+    {
+        _currentState.CheckConditionsSatisfied();
+    }
+
     /// <summary>
     /// Change the state of the object
     /// </summary>
