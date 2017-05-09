@@ -32,28 +32,20 @@ public class InteractiveObject : MonoBehaviour
     {
         if(CurrentState != null)
             _currentState.OnUse.Invoke();
-
-        //if(Conditions.Count == 0 || Conditions.All(c => c.IsSatisfied))
-        //{
-        //    DialogueManager.PlayDialogue(UseDialogue);
-        //    OnUse.Invoke();
-        //}
-        //else
-        //{
-        //    DialogueManager.PlayDialogue(CannotUseDialogue);
-        //}
     }
 
     public void Examine()
     {
         if (CurrentState != null)
             _currentState.OnExamine.Invoke();
-        //DialogueManager.PlayDialogue(ExamineDialogue);
     }
 
     public void Combine()
     {
-        InventoryManager.Combine(this);
+        if (CurrentState != null)
+            _currentState.OnCombine.Invoke();
+        
+        //InventoryManager.Combine(this);
     }
 
     public bool TrySatisfyCondition(Item useItem)
@@ -75,9 +67,21 @@ public class InteractiveObject : MonoBehaviour
         
         return false;
     }
-
+    
+    /// <summary>
+    /// Change the state of the object
+    /// </summary>
+    /// <param name="state">New state</param>
     public void SetState(InteractiveObjectState state)
     {
         CurrentState = state;
+    }
+
+    /// <summary>
+    /// Destroy this object
+    /// </summary>
+    public void DestroyThis()
+    {
+        Destroy(gameObject);
     }
 }

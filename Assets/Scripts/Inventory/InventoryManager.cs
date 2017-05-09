@@ -47,7 +47,7 @@ public class InventoryManager : vnc.Utilities.SingletonMonoBehaviour<InventoryMa
         }
     }
 
-    public static void Add(Item item)
+    public void Add(Item item)
     {
         var itemBtn = Instantiate(Singleton.ItemPrefab);
         itemBtn.item = item;
@@ -55,7 +55,7 @@ public class InventoryManager : vnc.Utilities.SingletonMonoBehaviour<InventoryMa
         itemBtn.transform.SetParent(Singleton.InventoryLayout.transform);
     }
 
-    public static void Combine(InteractiveObject interactiveObj)
+    public void Combine(InteractiveObject interactiveObj)
     {
         _currentObject = interactiveObj;
         Show();

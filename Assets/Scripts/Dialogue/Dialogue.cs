@@ -6,6 +6,11 @@ public class Dialogue : ScriptableObject
 {
     public string Key;
     public List<DialogueLine> Lines;
+
+    public void Play()
+    {
+        DialogueManager.PlayDialogue(this);
+    }
 }
 
 [System.Serializable]
