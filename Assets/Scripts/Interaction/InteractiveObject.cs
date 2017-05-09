@@ -16,7 +16,7 @@ public class InteractiveObject : MonoBehaviour
         }
     }
 
-    [Header("Dialogue keys")]
+    [Header("Dialogues")]
     public Dialogue ExamineDialogue;
     public Dialogue UseDialogue;
     public Dialogue CannotUseDialogue;
