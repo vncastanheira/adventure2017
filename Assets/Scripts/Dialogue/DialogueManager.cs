@@ -43,7 +43,7 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
             return;
         }
 
-        RunDialogue(dialogue);
+        Singleton.RunDialogue(dialogue);
     }
 
     /// <summary> Play dialogue from the manager </summary>
@@ -53,10 +53,10 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
         var dialogue = Singleton.Dialogues
             .FirstOrDefault(d => d.Key.Equals(key, System.StringComparison.InvariantCultureIgnoreCase));
 
-        RunDialogue(dialogue);
+        Singleton.RunDialogue(dialogue);
     }
 
-    static void RunDialogue(Dialogue dialogue)
+    public void RunDialogue(Dialogue dialogue)
     {
         if (Singleton.isBusy)
             return;
@@ -113,4 +113,5 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
         //Singleton.CanvasAnimator.SetTrigger("Dialogue_End");
         Singleton.isBusy = false;
     }
+
 }

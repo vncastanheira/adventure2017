@@ -1,9 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
+[System.Serializable]
 public class InteractiveObjectState : MonoBehaviour
 {
-    public string Key;
-    public Dialogue UseDialogue;
-    public Dialogue ExamineDialogue;
-    public Dialogue CombineDialogue;
+    [Header("Events")]
+    public UnityEvent OnUse;
+    public UnityEvent OnExamine;
+    public UnityEvent OnCombine;
+
+    [Header("Conditions")]
+    public List<Condition> Conditions;
 }

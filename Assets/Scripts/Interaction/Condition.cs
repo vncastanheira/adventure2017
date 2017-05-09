@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class Condition : MonoBehaviour
+public class Condition : ScriptableObject
 {
     public string Name;
     public bool IsSatisfied;

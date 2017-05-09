@@ -7,51 +7,48 @@ public class InteractiveObject : MonoBehaviour
 {
     [Header("Options")]
     public string Title;
-    public Item Item;
-    public bool IsItem
+
+    [Header("States")]
+    public List<InteractiveObjectState> States;
+    [HideInInspector] public InteractiveObjectState CurrentState
     {
         get
         {
-            return Item != null;
+            return _currentState;
+        }
+        set
+        {
+            _currentState = value;
         }
     }
-
-    [Header("Dialogues")]
-    public Dialogue ExamineDialogue;
-    public Dialogue UseDialogue;
-    public Dialogue CannotUseDialogue;
-
-    List<Condition> Conditions;
-    public UnityEvent OnUse;
+    InteractiveObjectState _currentState;
 
     private void Start()
     {
-        Conditions = GetComponents<Condition>().ToList();
+        CurrentState = States.FirstOrDefault();
     }
 
     public void Use()
     {
-        if (IsItem)
-        {
-            InventoryManager.Add(Item);
-            Destroy(gameObject);
-            return;
-        }
+        if(CurrentState != null)
+            _currentState.OnUse.Invoke();
 
-        if(Conditions.Count == 0 || Conditions.All(c => c.IsSatisfied))
-        {
-            DialogueManager.PlayDialogue(UseDialogue);
-            OnUse.Invoke();
-        }
-        else
-        {
-            DialogueManager.PlayDialogue(CannotUseDialogue);
-        }
+        //if(Conditions.Count == 0 || Conditions.All(c => c.IsSatisfied))
+        //{
+        //    DialogueManager.PlayDialogue(UseDialogue);
+        //    OnUse.Invoke();
+        //}
+        //else
+        //{
+        //    DialogueManager.PlayDialogue(CannotUseDialogue);
+        //}
     }
 
     public void Examine()
     {
-        DialogueManager.PlayDialogue(ExamineDialogue);
+        if (CurrentState != null)
+            _currentState.OnExamine.Invoke();
+        //DialogueManager.PlayDialogue(ExamineDialogue);
     }
 
     public void Combine()
@@ -61,14 +58,14 @@ public class InteractiveObject : MonoBehaviour
 
     public bool TrySatisfyCondition(Item useItem)
     {
-        if(Conditions == null)
+        if(_currentState.Conditions == null)
         {
             // TODO: Feedback
             Debug.LogWarning("No conditions met");
         }
         else
         {
-            var condition = Conditions.Find(c => c.RequiredItem == useItem);
+            var condition = _currentState.Conditions.Find(c => c.RequiredItem == useItem);
             if(condition != null)
             {
                 condition.IsSatisfied = true;
@@ -77,5 +74,10 @@ public class InteractiveObject : MonoBehaviour
         }
         
         return false;
+    }
+
+    public void SetState(InteractiveObjectState state)
+    {
+        CurrentState = state;
     }
 }
