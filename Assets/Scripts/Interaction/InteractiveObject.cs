@@ -7,42 +7,31 @@ public class InteractiveObject : MonoBehaviour
 {
     [Header("Options")]
     public string Title;
-
-    [Header("States")]
-    public List<InteractiveObjectState> States;
-    [HideInInspector] public InteractiveObjectState CurrentState
-    {
-        get
-        {
-            return _currentState;
-        }
-        set
-        {
-            _currentState = value;
-        }
-    }
+    public InteractiveObjectState FirstState;
     InteractiveObjectState _currentState;
 
     private void Start()
     {
-        CurrentState = States.FirstOrDefault();
+        _currentState = FirstState;
+        if (FirstState == null)
+            Debug.LogWarning("No first state was set for object " + name);
     }
 
     public void Use()
     {
-        if (CurrentState != null)
+        if (_currentState != null)
             _currentState.OnUse.Invoke();
     }
 
     public void Examine()
     {
-        if (CurrentState != null)
+        if (_currentState != null)
             _currentState.OnExamine.Invoke();
     }
 
     public void Combine()
     {
-        if (CurrentState != null)
+        if (_currentState != null)
         {
             _currentState.OnCombine.Invoke();
         }
@@ -79,7 +68,7 @@ public class InteractiveObject : MonoBehaviour
     /// <param name="state">New state</param>
     public void SetState(InteractiveObjectState state)
     {
-        CurrentState = state;
+        _currentState = state;
     }
 
     /// <summary>

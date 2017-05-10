@@ -25,4 +25,14 @@ public class GameManager : vnc.Utilities.SingletonMonoBehaviour<GameManager>
         if (Input.GetKeyDown(KeyCode.Escape))
             FirstPersonMode = !FirstPersonMode;
     }
+
+    public void EnterFirstPerson()
+    {
+        FirstPersonMode = true;
+    }
+
+    public void QuitFirstPerson()
+    {
+        FirstPersonMode = false;
+    }
 }
