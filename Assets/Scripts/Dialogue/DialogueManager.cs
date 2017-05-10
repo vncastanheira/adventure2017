@@ -13,8 +13,8 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
     /// <summary>All dialogues in the game</summary>
     public List<Dialogue> Dialogues;
     static Dialogue currentDialogue;
+    static Coroutine dialogueRoutine;
     bool canSkip;
-    bool isBusy;
 
     #region Singleton
     private void Awake()
@@ -58,13 +58,16 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
 
     public void RunDialogue(Dialogue dialogue)
     {
-        if (Singleton.isBusy)
-            return;
-
         if (dialogue != null)
         {
+            if (dialogueRoutine != null)
+            {
+                Singleton.DialogueText.text = string.Empty;
+                StopCoroutine(dialogueRoutine);
+            }
+
             currentDialogue = dialogue;
-            Singleton.StartCoroutine(StartDialogue());
+            dialogueRoutine = Singleton.StartCoroutine(StartDialogue());
         }
         else // this can never happen
         {
@@ -74,8 +77,6 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
 
     static IEnumerator StartDialogue()
     {
-        Singleton.isBusy = true;
-        //Singleton.CanvasAnimator.SetTrigger("Dialogue_Start");
         yield return new WaitForSeconds(0.5f);
         int index = 0;
         var currentLine = currentDialogue.Lines.First();
@@ -106,12 +107,9 @@ public class DialogueManager : vnc.Utilities.SingletonMonoBehaviour<DialogueMana
 
             index++;
             currentLine = currentDialogue.Lines.ElementAtOrDefault(index);
-            Singleton.isBusy = currentLine != null;
             yield return new WaitUntil(() => { return Singleton.canSkip;  });
         }
         Singleton.DialogueText.text = "";
-        //Singleton.CanvasAnimator.SetTrigger("Dialogue_End");
-        Singleton.isBusy = false;
     }
 
 }
